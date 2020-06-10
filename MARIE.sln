@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MARIE", "MARIE\MARIE.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MARIE.Interpreter", "MARIE.Interpreter\MARIE.Interpreter.csproj", "{55337F65-A1F4-490D-8382-242C70880CAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MARIE.Assembler", "MARIE.Assembler\MARIE.Assembler.csproj", "{2EE8875D-163E-49EB-BDE9-F3EF2CB66004}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MARIE.Assembler", "MARIE.Assembler\MARIE.Assembler.csproj", "{2EE8875D-163E-49EB-BDE9-F3EF2CB66004}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8AAD7FC9-F31B-4971-97EE-645C2DC27A1A}"
 	ProjectSection(SolutionItems) = preProject
-		samples\in.mas = samples\in.mas
+		samples\sample1.mas = samples\sample1.mas
 	EndProjectSection
 EndProject
 Global
