@@ -1,8 +1,7 @@
 {
   "profiles": {
     "MARIE.Assembler": {
-      "commandName": "Project",
-      "commandLineArgs": "in.txt out.bin"
+      "commandName": "Project"
     }
   }
 }

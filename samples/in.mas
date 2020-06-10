@@ -1,0 +1,18 @@
+/ A = B + C - D
+
+/ ORG 100
+
+LOAD B / Load B into AC
+ADD C / Add C into AC
+SUBT D / Subtract D from AC
+STORE A / Store into A
+
+
+LOAD A / Load A into AC
+OUTPUT / Print output
+HALT / Exit
+
+A, HEX 0
+B, HEX 205
+C, HEX 202
+D, HEX 417
