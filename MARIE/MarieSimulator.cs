@@ -8,7 +8,7 @@ namespace MARIE
         public event EventHandler<IOEventArgs> InputRegisterRead;
         public event EventHandler<IOEventArgs> OutputRegisterWrite;
 
-        private byte[] memory = new byte[0x0FFF]; // 4K words of main memory (this implies 12 bits per address)
+        private ushort[] memory = new ushort[0x0FFF]; // 4K words of main memory (this implies 12 bits per address)
 
         /// <summary>
         /// A 16-bit accumulator(AC)
@@ -133,23 +133,10 @@ namespace MARIE
         /// <returns></returns>
         public ushort GetMemory(ushort addr)
         {
-            // Word addressable, so multiply by the size of the word
-            addr *= sizeof(ushort);
-
             if (addr > 0x0FFF)
                 throw new ArgumentOutOfRangeException(nameof(addr), "Memory address cannot be greater than 0x0FFF");
 
-            // Ensure the address is masked to 12 bytes as per the MARIE spec
-            ushort masked = (ushort)(addr & 0x0FFF);
-
-            // Retrieve the first byte of the word
-            byte first = memory[masked];
-
-            // Retrieve the second byte of the word
-            byte second = memory[masked + 1];
-
-            // Return the combined bytes into a single word
-            return (ushort)((first << 8) + second);
+            return memory[addr];
         }
 
         /// <summary>
@@ -159,17 +146,9 @@ namespace MARIE
         /// <param name="word"></param>
         public void SetMemory(ushort addr, ushort word)
         {
-            // Word addressable, so multiply by the size of the word
-            addr *= sizeof(ushort);
-
             if (addr > 0x0FFF)
                 throw new ArgumentOutOfRangeException(nameof(addr), "Memory address cannot be greater than 0x0FFF");
-
-            // Ensure the address is masked to 12 bytes as per the MARIE spec
-            ushort masked = (ushort)(addr & 0x0FFF);
-
-            memory[masked] = (byte)(word >> 8);
-            memory[masked + 1] = (byte)(word & 0x00FF);
+            memory[addr] = word;
         }
 
         /// <summary>
@@ -182,9 +161,9 @@ namespace MARIE
         /// Returns a copy of the entire memory of the MARIE simulator
         /// </summary>
         /// <returns></returns>
-        public byte[] GetMemory()
+        public ushort[] GetMemory()
         {
-            byte[] copy = new byte[memory.Length];
+            ushort[] copy = new ushort[memory.Length];
             memory.CopyTo(copy, 0);
             return copy;
         }
@@ -193,11 +172,11 @@ namespace MARIE
         /// Set the memory to the specified program and set (or reset) the simulator for execution
         /// </summary>
         /// <param name="program"></param>
-        public void LoadProgram(byte[] program)
+        public void LoadProgram(ushort[] program)
         {
             if (program.Length > 0x0FFF)
                 throw new ArgumentException("Program length should less than 0x0FFF", nameof(program));
-            memory = new byte[0x0FFF];
+            memory = new ushort[0x0FFF];
             program.CopyTo(memory, 0);
 
             // Reset counters to 0

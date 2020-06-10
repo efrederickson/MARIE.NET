@@ -49,17 +49,20 @@ namespace MARIE.Interpreter
         static void Main(string[] args)
         {
             var ms = new MarieSimulator();
-            List<byte> program = new List<byte>();
+            List<ushort> program = new List<ushort>();
 
             Console.WriteLine("An empty line will commence execution of the program");
             while (true)
             {
-                Console.Write("Instruction (hex): ");
+                Console.Write("Instruction(s) (hex): ");
                 var insRaw = Console.ReadLine().Trim();
                 if (string.IsNullOrEmpty(insRaw))
                     break;
-                ushort data = ushort.Parse(insRaw, System.Globalization.NumberStyles.HexNumber);
-                program.AddRange(new[] { (byte)(data >> 8), (byte)(data & 0xFF) });
+                foreach (var insRawSplit in insRaw.Split(" "))
+                {
+                    ushort data = ushort.Parse(insRawSplit.Trim(), System.Globalization.NumberStyles.HexNumber);
+                    program.Add(data);
+                }
             }
 
             var ioDev = new IODev();
@@ -80,9 +83,9 @@ namespace MARIE.Interpreter
                 var mem = ms.GetMemory().Take(8 * 4).ToArray();
                 for (int i = 0; i < mem.Length; i += 8)
                 {
-                    for (int j = 0; j < 8; j += 2)
+                    for (int j = 0; j < 8; j += 1)
                     {
-                        var fmt = string.Format("{0:X02}{1:X02} ", mem[i + j], mem[i + j + 1]);
+                        var fmt = string.Format("{0:X04} ", mem[i + j]);
                         Console.Write(fmt);
                     }
                     Console.WriteLine();
