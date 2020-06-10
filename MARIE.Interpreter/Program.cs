@@ -1,6 +1,7 @@
 ﻿using MARIE.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MARIE.Interpreter
@@ -52,12 +53,22 @@ namespace MARIE.Interpreter
             List<ushort> program = new List<ushort>();
 
             Console.WriteLine("An empty line will commence execution of the program");
+            Console.WriteLine("Alternatively, enter a filename to execute a precompiled binary file");
             while (true)
             {
                 Console.Write("Instruction(s) (hex): ");
                 var insRaw = Console.ReadLine().Trim();
                 if (string.IsNullOrEmpty(insRaw))
                     break;
+
+                if (File.Exists(insRaw))
+                {
+                    var bytes = File.ReadAllBytes(insRaw);
+                    for (int i = 0; i < bytes.Length; i += 2)
+                        program.Add((ushort)((bytes[i] << 8) + bytes[i+1]));
+                    break;
+                }
+
                 foreach (var insRawSplit in insRaw.Split(" "))
                 {
                     ushort data = ushort.Parse(insRawSplit.Trim(), System.Globalization.NumberStyles.HexNumber);
@@ -80,15 +91,24 @@ namespace MARIE.Interpreter
                     ms.MemoryAddressRegister));
 
                 Console.WriteLine("Memory:");
-                var mem = ms.GetMemory().Take(8 * 4).ToArray();
-                for (int i = 0; i < mem.Length; i += 8)
+                Console.WriteLine("        +0   +1   +2   +3   +4   +5   +6   +7   +8   +9   +A   +B   +C   +D   +E   +F");
+                var mem = ms.GetMemory().ToArray();
+                for (int i = 0; i < mem.Length - 0xF; i += 0x10)
                 {
-                    for (int j = 0; j < 8; j += 1)
+                    Console.Write(string.Format("{0:X04}   ", i));
+                    for (int j = 0; j <= 0xf; j += 1)
                     {
-                        var fmt = string.Format("{0:X04} ", mem[i + j]);
+                        var fmt = string.Format(" {0:X04}", mem[i + j]);
                         Console.Write(fmt);
                     }
                     Console.WriteLine();
+
+                    // If all the rest is zero mem, skip it
+                    if (mem.Skip(i).Where(word => word > 0).Count() == 0)
+                    {
+                        Console.WriteLine(string.Format("... {0:X04} to 0FFF is all zeroed memory ...", i + 0x10));
+                        break;
+                    }
                 }
 
                 Console.WriteLine("Output:");
